@@ -114,6 +114,15 @@ body.admin-body {
     gap: 8px;
 }
 
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 8px;
+    font-size: 14px;
+    color: var(--admin-text);
+}
+
 .admin-content {
     padding: 20px;
 }
