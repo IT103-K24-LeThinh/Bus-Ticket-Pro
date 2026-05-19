@@ -33,6 +33,7 @@ public class Trip {
     @Column(name = "ticket_price")
     private Double ticketPrice;
 
+    @Enumerated(EnumType.STRING)
     private TripStatus status;
 
     @Column(name = "created_at")

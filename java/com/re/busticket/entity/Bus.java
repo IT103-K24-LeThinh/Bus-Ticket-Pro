@@ -21,6 +21,7 @@ public class Bus {
     private String licensePlate;
 
     @Column(name = "bus_type")
+    @Enumerated(EnumType.STRING)
     private BusType busType;
 
     @Column(name = "total_seats")

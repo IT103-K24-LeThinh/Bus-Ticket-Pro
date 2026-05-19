@@ -31,12 +31,14 @@ public class Booking {
     @Column(name = "booking_time")
     private long bookingTime;
 
+    @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
 
     @Column(name = "payment_amount")
     private double paymentAmount;
 
     @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
     @Column(name = "created_at")

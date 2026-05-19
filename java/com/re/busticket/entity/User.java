@@ -30,6 +30,7 @@ public class User {
     private String email;
     private String address;
 
+    @Enumerated(EnumType.STRING)
     private RoleType role;
 
     @Column(name = "is_active")

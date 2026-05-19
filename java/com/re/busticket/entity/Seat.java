@@ -24,6 +24,7 @@ public class Seat {
     @Column(name = "seat_number")
     private String seatNumber;
 
+    @Enumerated(EnumType.STRING)
     private SeatStatus status;
 
     @Column(name = "locked_by_user_id")
