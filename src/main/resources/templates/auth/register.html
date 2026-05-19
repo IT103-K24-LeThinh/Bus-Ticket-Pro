@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<section layout:fragment="content" class="auth-section">
+    <div class="auth-card">
+        <h1>Tạo tài khoản mới</h1>
+        <p class="auth-description">Điền đầy đủ thông tin để đăng ký hệ thống.</p>
+
+        <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+
+        <form th:action="@{/register}" method="post" th:object="${user}" class="form-grid">
+            <div class="alert alert-error" th:if="${#fields.hasGlobalErrors()}">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+            </div>
+
+            <label for="username">Tên đăng nhập</label>
+            <input id="username" type="text" th:field="*{username}"
+                   th:classappend="${#fields.hasErrors('username')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+
+            <label for="fullName">Họ và tên</label>
+            <input id="fullName" type="text" th:field="*{fullName}"
+                   th:classappend="${#fields.hasErrors('fullName')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" th:field="*{email}"
+                   th:classappend="${#fields.hasErrors('email')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+            <label for="phone">Số điện thoại</label>
+            <input id="phone" type="text" th:field="*{phone}"
+                   th:classappend="${#fields.hasErrors('phone')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+
+            <label for="address">Địa chỉ</label>
+            <input id="address" type="text" th:field="*{address}"
+                   th:classappend="${#fields.hasErrors('address')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
+
+            <label for="password">Mật khẩu</label>
+            <input id="password" type="password" th:field="*{password}"
+                   th:classappend="${#fields.hasErrors('password')} ? ' input-error' : ''" required>
+            <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+
+            <button type="submit">Đăng ký</button>
+        </form>
+
+        <p class="auth-footnote">
+            Đã có tài khoản?
+            <a th:href="@{/login}">Đăng nhập</a>
+        </p>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<header th:fragment="appHeader"
+        xmlns:th="http://www.thymeleaf.org"
+        class="app-header">
+    <div class="header-inner">
+        <a class="brand" th:href="@{/}">Bus Ticket Pro</a>
+
+        <nav class="header-nav">
+            <a th:href="@{/}">Trang chủ</a>
+            <a th:href="@{/login}">Đăng nhập</a>
+            <a th:href="@{/register}">Đăng ký</a>
+        </nav>
+    </div>
+</header>

@@ -1,13 +1,14 @@
 package com.re.busticket.dto;
 
-import com.re.busticket.entity.enums.RoleType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class RegisterUserDto {
     @NotBlank(message = "Username không được để trống")
@@ -28,6 +29,6 @@ public class RegisterUserDto {
     private String address;
 
     @NotBlank(message = "Phone không được để trống")
-    @Pattern(regexp = "^\\d{11}$", message = "Phone phải có đúng 11 chữ số")
+    @Pattern(regexp = "^\\d{9,10}$", message = "Phone phải có đúng 9 hoặc 10 chữ số")
     private String phone;
 }

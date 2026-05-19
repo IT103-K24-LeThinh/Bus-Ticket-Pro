@@ -1,0 +1,313 @@
+:root {
+    --primary: #4CAF50;
+    --primary-hover: #43A047;
+    --secondary: #A5D6A7;
+    --secondary-hover: #81C784;
+    --bg: #f0f0f0;
+    --surface: #FFFFFF;
+    --surface-alt: #F6FBF7;
+    --text: #212121;
+    --text-muted: #616161;
+    --success: #66BB6A;
+    --warning: #FFA726;
+    --danger: #EF5350;
+    --border: #C8E6C9;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    background-color: var(--bg);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    background-color: var(--primary);
+    color: #FFFFFF;
+    border-bottom: 1px solid var(--primary-hover);
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.brand {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.brand:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-nav a {
+    color: #FFFFFF;
+    font-weight: 500;
+    padding: 4px 0;
+}
+
+.header-nav a:hover {
+    color: var(--secondary);
+}
+
+.app-layout {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+.app-sidebar {
+    width: 240px;
+    background-color: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+}
+
+.sidebar-title {
+    margin: 0 0 10px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--text);
+    background-color: transparent;
+    font-size: 14px;
+    font-family: inherit;
+    text-align: left;
+}
+
+.sidebar-link:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary-hover);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.sidebar-form {
+    margin: 0;
+}
+
+.sidebar-button {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 10px 12px;
+    background-color: transparent;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar-button:hover {
+    background-color: var(--secondary);
+    border-color: var(--secondary-hover);
+}
+
+.app-content {
+    flex: 1;
+    padding: 24px;
+}
+
+.page-section,
+.auth-section {
+    max-width: 520px;
+}
+
+.auth-section {
+    margin: 24px auto;
+    padding: 0 12px;
+}
+
+.auth-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.auth-card h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+.auth-description {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+}
+
+.form-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.form-grid label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-grid input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.form-grid input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-grid input.input-error {
+    border-color: var(--danger);
+}
+
+.form-grid button {
+    margin-top: 8px;
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    color: #FFFFFF;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form-grid button:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    border: 1px solid var(--secondary);
+    background-color: var(--secondary);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    border-color: var(--secondary-hover);
+    background-color: var(--secondary-hover);
+}
+
+.alert {
+    border-radius: 6px;
+    border: 1px solid;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.alert-success {
+    color: var(--text);
+    border-color: var(--success);
+    background-color: #EAF7EB;
+}
+
+.alert-warning {
+    color: var(--text);
+    border-color: var(--warning);
+    background-color: #FFF3E0;
+}
+
+.alert-error {
+    color: var(--text);
+    border-color: var(--danger);
+    background-color: #FDECEC;
+}
+
+.field-error {
+    margin: -6px 0 8px;
+    color: var(--danger);
+    font-size: 12px;
+}
+
+.auth-footnote {
+    margin: 16px 0 0;
+    color: var(--text-muted);
+}
+
+.app-footer {
+    border-top: 1px solid var(--border);
+    background-color: var(--surface);
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+@media (max-width: 992px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .app-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .app-content {
+        padding: 16px;
+    }
+
+    .auth-card {
+        padding: 16px;
+    }
+}

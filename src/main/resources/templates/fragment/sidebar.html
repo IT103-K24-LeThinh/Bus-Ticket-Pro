@@ -1,0 +1,13 @@
+<aside th:fragment="appSidebar"
+       xmlns:th="http://www.thymeleaf.org"
+       class="app-sidebar">
+    <nav class="sidebar-nav">
+        <p class="sidebar-title">Điều hướng</p>
+        <a class="sidebar-link" th:href="@{/}">Dashboard</a>
+        <a class="sidebar-link" th:href="@{/passenger}">Vé của tôi</a>
+        <a class="sidebar-link" th:href="@{/admin}">Quản trị</a>
+        <form th:action="@{/logout}" method="post" class="sidebar-form">
+            <button type="submit" class="sidebar-button">Đăng xuất</button>
+        </form>
+    </nav>
+</aside>

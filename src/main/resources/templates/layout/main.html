@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Bus Ticket Pro">Bus Ticket Pro</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <th:block layout:fragment="pageStyles"></th:block>
+</head>
+<body>
+<div class="app-shell">
+    <header th:replace="~{fragment/header :: appHeader}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragment/sidebar :: appSidebar}"></aside>
+
+        <main class="app-content" layout:fragment="content">
+            <h1>Bus Ticket Pro</h1>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragment/footer :: appFooter}"></footer>
+</div>
+</body>
+</html>

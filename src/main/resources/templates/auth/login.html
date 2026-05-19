@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<section layout:fragment="content" class="auth-section">
+    <div class="auth-card">
+        <h1>Đăng nhập hệ thống</h1>
+        <p class="auth-description">Nhập thông tin tài khoản để tiếp tục.</p>
+
+        <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+        <form th:action="@{/login}" method="post" class="form-grid">
+            <label for="username">Tên đăng nhập</label>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+
+            <label for="password">Mật khẩu</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+            <button type="submit">Đăng nhập</button>
+        </form>
+
+        <p class="auth-footnote">
+            Chưa có tài khoản?
+            <a th:href="@{/register}">Đăng ký ngay</a>
+        </p>
+    </div>
+</section>
+</body>
+</html>
