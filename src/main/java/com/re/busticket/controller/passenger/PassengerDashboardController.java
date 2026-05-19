@@ -12,6 +12,8 @@ public class PassengerDashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("message", "Chào mừng bạn đến trang hành khách.");
+        model.addAttribute("currentPath", "/passenger/dashboard");
+        model.addAttribute("pageTitle", "Bảng điều khiển");
         return "passenger/dashboard";
     }
 }

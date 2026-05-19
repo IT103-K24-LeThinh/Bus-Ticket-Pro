@@ -1,0 +1,25 @@
+<header th:fragment="passengerHeader"
+        xmlns:th="http://www.thymeleaf.org"
+        class="passenger-header">
+    <div class="passenger-header-inner">
+        <div class="d-flex align-items-center gap-2">
+            <a th:if="${currentPath != null and currentPath != '/passenger/dashboard'}"
+               class="btn btn-sm btn-outline-secondary"
+               th:href="${backUrl != null ? backUrl : '/passenger/dashboard'}"
+               title="Quay lại">
+                &#8592; Quay lại
+            </a>
+            <h1 class="page-title mb-0" th:text="${pageTitle} ?: 'Hành khách'">Hành khách</h1>
+        </div>
+
+        <div class="passenger-header-actions">
+            <span th:if="${currentUser != null}" class="passenger-user-info">
+                <strong th:text="${currentUser.fullName}">Hành khách</strong>
+                <span class="badge badge-success" th:text="${currentUser.role}">PASSENGER</span>
+            </span>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-primary">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Tra cứu vé</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Tra cứu vé</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <p class="text-muted mb-4">
+                        Nhập mã vé (ví dụ: <code>BK-123</code>) để xem chi tiết vé của bạn.
+                    </p>
+
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form method="post" th:action="@{/passenger/booking/lookup}" class="row g-3">
+                        <div class="col-12">
+                            <label for="bookingReference" class="form-label">Mã vé</label>
+                            <input type="text"
+                                   id="bookingReference"
+                                   name="bookingReference"
+                                   class="form-control"
+                                   placeholder="BK-123"
+                                   th:value="${bookingReference}"
+                                   autocomplete="off"
+                                   required>
+                        </div>
+
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Tra cứu</button>
+                            <a th:href="@{/passenger/booking/history}" class="btn btn-outline-secondary">
+                                Xem lịch sử đặt vé
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

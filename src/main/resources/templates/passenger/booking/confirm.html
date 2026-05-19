@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Xác nhận đặt vé</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Xác nhận đặt vé</h2>
+        <a th:href="@{${backUrl}}" class="btn btn-outline-secondary btn-sm">
+            &larr; Quay lại chọn ghế
+        </a>
+    </div>
+
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="row g-4">
+        <!-- LEFT: Trip & Seat info -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6 mb-3">Thông tin chuyến &amp; ghế</h3>
+                    <p class="mb-2">
+                        <strong>Tuyến:</strong>
+                        <span th:text="${departureLocationName}">Điểm đi</span>
+                        &rarr;
+                        <span th:text="${arrivalLocationName}">Điểm đến</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Khởi hành:</strong>
+                        <span th:text="${#temporals.format(trip.departureTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Đến nơi:</strong>
+                        <span th:text="${#temporals.format(trip.arrivalTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Biển số xe:</strong>
+                        <span th:text="${bus.licensePlate}">XX-XXXXX</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Số ghế:</strong>
+                        <span class="badge bg-primary" th:text="${seat.seatNumber}">A1</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Giá vé:</strong>
+                        <span th:text="${#numbers.formatInteger(trip.ticketPrice, 0, 'POINT') + ' VND'}">0 VND</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Booking form -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h6 mb-3">Thông tin đặt vé</h3>
+
+                    <form method="post"
+                          th:action="@{/passenger/booking/create}"
+                          th:object="${bookingForm}">
+
+                        <input type="hidden" th:field="*{tripId}">
+                        <input type="hidden" th:field="*{seatId}">
+
+                        <div class="mb-3">
+                            <label for="passengerFullName" class="form-label">Họ và tên</label>
+                            <input type="text"
+                                   id="passengerFullName"
+                                   class="form-control"
+                                   th:value="*{passengerFullName}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="passengerPhone" class="form-label">Số điện thoại</label>
+                            <input type="text"
+                                   id="passengerPhone"
+                                   class="form-control"
+                                   th:value="*{passengerPhone}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="passengerEmail" class="form-label">Email</label>
+                            <input type="email"
+                                   id="passengerEmail"
+                                   class="form-control"
+                                   th:value="*{passengerEmail}"
+                                   readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Phương thức thanh toán</label>
+                            <div th:each="method, iterStat : ${paymentMethods}" class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       th:field="*{paymentMethod}"
+                                       th:value="${method}"
+                                       th:id="${'pm-' + method}">
+                                <label class="form-check-label"
+                                       th:for="${'pm-' + method}"
+                                       th:text="${paymentMethodLabels.get(method.name())}">
+                                    Tiền mặt
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Xác nhận đặt vé
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

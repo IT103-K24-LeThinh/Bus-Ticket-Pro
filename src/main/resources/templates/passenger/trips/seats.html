@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Chọn ghế</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Chọn ghế</h2>
+    </div>
+
+    <div class="row g-4">
+        <!-- LEFT: Bus layout -->
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-center mb-3">
+                        <strong>Biển số:</strong>
+                        <span th:text="${bus.licensePlate}">XX-XXXXX</span>
+                        &middot;
+                        <strong>Loại xe:</strong>
+                        <span th:text="${bus.busType.displayName}">29 chỗ</span>
+                        (<span th:text="${bus.totalSeats}">29</span> ghế)
+                    </p>
+
+                    <div class="bus-layout">
+                        <div class="bus-front">
+                            <div class="driver-area">Tài xế</div>
+                            <div class="door-indicator">Cửa</div>
+                        </div>
+
+                        <!-- Main seats grid -->
+                        <div class="bus-seats-grid"
+                             th:with="regularCount=${bus.busType.name() == 'SEATS_29' ? 28 : 40}">
+                            <th:block th:each="seat, iterStat : ${seats}">
+                                <th:block th:if="${iterStat.index &lt; regularCount}">
+                                    <div th:classappend="${'seat-' + seat.status.name()}"
+                                         class="seat-cell"
+                                         th:text="${seat.seatNumber}"
+                                         th:attr="data-seat-id=${seat.id},data-seat-number=${seat.seatNumber},data-status=${seat.status.name()}"
+                                         onclick="selectSeat(this)">
+                                    </div>
+                                    <div class="aisle" th:if="${iterStat.index % 4 == 1}"></div>
+                                </th:block>
+                            </th:block>
+                        </div>
+
+                        <!-- Back row -->
+                        <div class="bus-back-row"
+                             th:with="regularCount=${bus.busType.name() == 'SEATS_29' ? 28 : 40}">
+                            <th:block th:each="seat, iterStat : ${seats}">
+                                <div th:if="${iterStat.index &gt;= regularCount}"
+                                     th:classappend="${'seat-' + seat.status.name()}"
+                                     class="seat-cell"
+                                     th:text="${seat.seatNumber}"
+                                     th:attr="data-seat-id=${seat.id},data-seat-number=${seat.seatNumber},data-status=${seat.status.name()}"
+                                     onclick="selectSeat(this)">
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="seat-legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-available"></div>
+                            <span>Trống</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-pending"></div>
+                            <span>Đang giữ</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-booked"></div>
+                            <span>Đã đặt</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-selected"></div>
+                            <span>Đang chọn</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Side panel -->
+        <div class="col-lg-5">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="h6 mb-3">Thông tin chuyến</h3>
+                    <p class="mb-2">
+                        <strong>Tuyến:</strong>
+                        <span th:text="${departureLocationName}">Điểm đi</span>
+                        &rarr;
+                        <span th:text="${arrivalLocationName}">Điểm đến</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Khởi hành:</strong>
+                        <span th:text="${#temporals.format(trip.departureTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Đến nơi:</strong>
+                        <span th:text="${#temporals.format(trip.arrivalTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Biển số xe:</strong>
+                        <span th:text="${bus.licensePlate}">XX-XXXXX</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Giá vé:</strong>
+                        <span th:text="${#numbers.formatInteger(trip.ticketPrice, 0, 'POINT') + ' VND'}">0 VND</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="h6 mb-3">Ghế đang chọn</h3>
+                    <p class="mb-2">
+                        <strong>Số ghế:</strong>
+                        <span id="selectedSeatLabel" class="text-muted">Chưa chọn</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Tổng tiền:</strong>
+                        <span id="totalAmountLabel">0 VND</span>
+                    </p>
+                </div>
+            </div>
+
+            <a id="continueBtn"
+               class="btn btn-primary w-100 disabled"
+               aria-disabled="true"
+               href="#">
+                Tiếp tục
+            </a>
+        </div>
+    </div>
+</section>
+
+<th:block layout:fragment="pageScripts">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const tripId = /*[[${trip.id}]]*/ 0;
+        const ticketPrice = /*[[${trip.ticketPrice}]]*/ 0;
+
+        let selectedSeatId = null;
+        let selectedSeatNumber = null;
+
+        function formatVnd(amount) {
+            try {
+                return new Intl.NumberFormat('vi-VN').format(amount) + ' VND';
+            } catch (e) {
+                return amount + ' VND';
+            }
+        }
+
+        function updateSidePanel() {
+            const seatLabel = document.getElementById('selectedSeatLabel');
+            const totalLabel = document.getElementById('totalAmountLabel');
+            const continueBtn = document.getElementById('continueBtn');
+
+            if (selectedSeatId) {
+                seatLabel.textContent = selectedSeatNumber;
+                seatLabel.classList.remove('text-muted');
+                totalLabel.textContent = formatVnd(ticketPrice);
+                continueBtn.classList.remove('disabled');
+                continueBtn.removeAttribute('aria-disabled');
+                continueBtn.setAttribute(
+                    'href',
+                    '/passenger/booking/confirm?tripId=' + tripId + '&seatId=' + selectedSeatId
+                );
+            } else {
+                seatLabel.textContent = 'Chưa chọn';
+                seatLabel.classList.add('text-muted');
+                totalLabel.textContent = '0 VND';
+                continueBtn.classList.add('disabled');
+                continueBtn.setAttribute('aria-disabled', 'true');
+                continueBtn.setAttribute('href', '#');
+            }
+        }
+
+        function selectSeat(el) {
+            const status = el.getAttribute('data-status');
+            if (status !== 'AVAILABLE') {
+                return;
+            }
+
+            const seatId = el.getAttribute('data-seat-id');
+            const seatNumber = el.getAttribute('data-seat-number');
+
+            // Click lại ghế đang chọn -> bỏ chọn
+            if (selectedSeatId === seatId) {
+                el.classList.remove('selected');
+                selectedSeatId = null;
+                selectedSeatNumber = null;
+                updateSidePanel();
+                return;
+            }
+
+            // Bỏ chọn ghế cũ (nếu có)
+            document.querySelectorAll('.seat-cell.selected').forEach(function (s) {
+                s.classList.remove('selected');
+            });
+
+            // Chọn ghế mới
+            el.classList.add('selected');
+            selectedSeatId = seatId;
+            selectedSeatNumber = seatNumber;
+            updateSidePanel();
+        }
+
+        // Chặn click khi button đang disabled
+        document.addEventListener('DOMContentLoaded', function () {
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.addEventListener('click', function (e) {
+                if (continueBtn.classList.contains('disabled')) {
+                    e.preventDefault();
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

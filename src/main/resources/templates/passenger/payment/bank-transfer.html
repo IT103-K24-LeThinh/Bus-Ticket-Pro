@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Thanh toán chuyển khoản</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Thanh toán chuyển khoản</h2>
+        <a th:href="@{${backUrl}}" class="btn btn-outline-secondary btn-sm">
+            &larr; Quay lại lịch sử đặt vé
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h3 class="h4 mb-2">Thanh toán chuyển khoản</h3>
+                        <p class="text-muted mb-0">
+                            Vui lòng hoàn tất thanh toán để xác nhận vé của bạn.
+                        </p>
+                    </div>
+
+                    <div class="border rounded p-3 mb-3 bg-light">
+                        <div class="row g-2">
+                            <div class="col-sm-5 text-muted">Mã vé</div>
+                            <div class="col-sm-7 fw-semibold">
+                                <span class="badge bg-primary fs-6"
+                                      th:text="${bookingReference}">BK-0</span>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        <div class="row g-2">
+                            <div class="col-sm-5 text-muted">Số tiền cần thanh toán</div>
+                            <div class="col-sm-7 fw-bold text-danger fs-5"
+                                 th:text="${#numbers.formatInteger(paymentAmount, 0, 'POINT') + ' VND'}">
+                                0 VND
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert">
+                        Tích hợp thanh toán đang được hoàn thiện. Vé sẽ giữ trạng thái
+                        CHỜ XỬ LÝ cho đến khi thanh toán được xử lý.
+                    </div>
+
+                    <div class="border border-dashed rounded p-4 text-center text-muted mb-4"
+                         style="border-style: dashed !important;">
+                        (Giao diện thanh toán sẽ được cập nhật trong tương lai)
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                        <a th:href="@{/passenger/booking/history}"
+                           class="btn btn-outline-secondary">
+                            Quay lại
+                        </a>
+                        <a th:href="@{'/passenger/booking/' + ${booking.id}}"
+                           class="btn btn-primary">
+                            Xem chi tiết vé
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

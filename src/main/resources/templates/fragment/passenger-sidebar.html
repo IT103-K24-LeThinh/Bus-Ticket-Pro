@@ -1,0 +1,36 @@
+<aside th:fragment="passengerSidebar"
+       xmlns:th="http://www.thymeleaf.org"
+       class="passenger-sidebar">
+    <a class="passenger-brand" th:href="@{/passenger/dashboard}">
+        <img th:src="@{/favicon.ico}" alt="Logo">
+        <span>Bus Ticket</span>
+    </a>
+
+    <nav class="passenger-nav">
+        <a class="passenger-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/passenger/dashboard')} ? ' active' : ''"
+           th:href="@{/passenger/dashboard}">
+            Bảng điều khiển
+        </a>
+        <a class="passenger-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/passenger/trips/search')} ? ' active' : ''"
+           th:href="@{/passenger/trips/search}">
+            Tra cứu chuyến xe
+        </a>
+        <a class="passenger-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/passenger/booking/lookup')} ? ' active' : ''"
+           th:href="@{/passenger/booking/lookup}">
+            Tra cứu vé
+        </a>
+        <a class="passenger-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/passenger/booking/history')} ? ' active' : ''"
+           th:href="@{/passenger/booking/history}">
+            Lịch sử đặt vé
+        </a>
+        <a class="passenger-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/passenger/profile')} ? ' active' : ''"
+           th:href="@{/passenger/profile}">
+            Hồ sơ cá nhân
+        </a>
+    </nav>
+</aside>

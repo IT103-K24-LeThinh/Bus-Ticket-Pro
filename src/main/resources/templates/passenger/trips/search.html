@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu chuyến xe</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0">Tra cứu chuyến xe</h2>
+    </div>
+
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" th:action="@{/passenger/trips/search}" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="departureLocationId" class="form-label">Điểm đi <span style="color:red;">*</span></label>
+                    <select id="departureLocationId"
+                            name="departureLocationId"
+                            class="form-select"
+                            required>
+                        <option value="">-- Chọn điểm đi --</option>
+                        <option th:each="loc : ${locations}"
+                                th:value="${loc.id}"
+                                th:text="${loc.name}"
+                                th:selected="${departureLocationId != null and departureLocationId == loc.id}">
+                            Hà Nội
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="arrivalLocationId" class="form-label">Điểm đến <span style="color:red;">*</span></label>
+                    <select id="arrivalLocationId"
+                            name="arrivalLocationId"
+                            class="form-select"
+                            required>
+                        <option value="">-- Chọn điểm đến --</option>
+                        <option th:each="loc : ${locations}"
+                                th:value="${loc.id}"
+                                th:text="${loc.name}"
+                                th:selected="${arrivalLocationId != null and arrivalLocationId == loc.id}">
+                            TP.HCM
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="travelDate" class="form-label">Ngày khởi hành</label>
+                    <input type="date"
+                           id="travelDate"
+                           name="travelDate"
+                           class="form-control"
+                           th:value="${travelDate != null ? #temporals.format(travelDate, 'yyyy-MM-dd') : ''}">
+                </div>
+
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-primary">Tra cứu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${searchPerformed}">
+        <div th:if="${results == null or results.isEmpty()}"
+             class="alert alert-warning text-center">
+            Không tìm thấy chuyến xe phù hợp.
+        </div>
+
+        <div class="card" th:if="${results != null and !results.isEmpty()}">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th>Điểm đi</th>
+                            <th>Điểm đến</th>
+                            <th>Khởi hành</th>
+                            <th>Đến nơi</th>
+                            <th>Giá vé (VND)</th>
+                            <th>Xe</th>
+                            <th>Số ghế trống</th>
+                            <th style="width: 130px;">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="result : ${results}">
+                            <td th:text="${result.departureLocationName()}">Hà Nội</td>
+                            <td th:text="${result.arrivalLocationName()}">TP.HCM</td>
+                            <td th:text="${#temporals.format(result.departureTime(), 'dd/MM/yyyy HH:mm')}">
+                                01/01/2024 08:00
+                            </td>
+                            <td th:text="${#temporals.format(result.arrivalTime(), 'dd/MM/yyyy HH:mm')}">
+                                01/01/2024 20:00
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(result.ticketPrice(), 0, 'COMMA', 0, 'POINT')}">
+                                500.000
+                            </td>
+                            <td>
+                                <div th:text="${result.busLicensePlate()}">30A-12345</div>
+                                <small class="text-muted" th:text="${result.busTypeDisplay()}">Ghế ngồi 45 chỗ</small>
+                            </td>
+                            <td th:text="${result.availableSeats()}">20</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary"
+                                   th:href="@{|/passenger/trips/${result.tripId()}/seats|(departureLocationId=${departureLocationId},arrivalLocationId=${arrivalLocationId},travelDate=${travelDate})}">
+                                    Đặt vé
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/passenger}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Chi tiết vé</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Chi tiết vé</h2>
+        <a th:href="@{${backUrl}}" class="btn btn-outline-secondary btn-sm">
+            &larr; Quay lại lịch sử
+        </a>
+    </div>
+
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="h6 mb-3">Thông tin vé</h3>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <p class="mb-2">
+                        <strong>Mã vé:</strong>
+                        <span class="badge bg-primary" th:text="${bookingReference}">BK-0</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Tuyến:</strong>
+                        <span th:text="${departureLocationName}">Điểm đi</span>
+                        &rarr;
+                        <span th:text="${arrivalLocationName}">Điểm đến</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Khởi hành:</strong>
+                        <span th:text="${#temporals.format(trip.departureTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Đến nơi:</strong>
+                        <span th:text="${#temporals.format(trip.arrivalTime, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Biển số xe:</strong>
+                        <span th:text="${bus.licensePlate}">XX-XXXXX</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Số ghế:</strong>
+                        <span class="badge bg-secondary" th:text="${seat.seatNumber}">A1</span>
+                    </p>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="mb-2">
+                        <strong>Trạng thái:</strong>
+                        <span th:text="${bookingStatusLabels.get(booking.bookingStatus.name())}">Trạng thái</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Phương thức thanh toán:</strong>
+                        <span th:text="${paymentMethodLabels.get(booking.paymentMethod.name())}">Phương thức</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Số tiền:</strong>
+                        <span th:text="${#numbers.formatInteger(booking.paymentAmount, 0, 'POINT') + ' VND'}">0 VND</span>
+                    </p>
+                    <p class="mb-0">
+                        <strong>Thời gian đặt:</strong>
+                        <span th:text="${booking.bookingTime != null ? #temporals.format(booking.bookingTime, 'dd/MM/yyyy HH:mm') : '-'}">--/--/---- --:--</span>
+                    </p>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex flex-wrap gap-2">
+                <a th:href="@{${backUrl}}" class="btn btn-outline-secondary">
+                    Quay lại
+                </a>
+
+                <form th:if="${cancellable}"
+                      method="post"
+                      th:action="@{'/passenger/booking/' + ${booking.id} + '/cancel'}"
+                      onsubmit="return confirm('Bạn có chắc muốn huỷ vé này không?');"
+                      class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        Huỷ vé
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

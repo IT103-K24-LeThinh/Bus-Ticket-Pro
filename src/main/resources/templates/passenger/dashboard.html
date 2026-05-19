@@ -2,14 +2,82 @@
 <html lang="vi"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
+      layout:decorate="~{layout/passenger}">
 <head>
-    <title>Trang hành khách</title>
+    <title>Bảng điều khiển</title>
 </head>
 <body>
-<section layout:fragment="content" class="page-section">
-    <h1>Trang hành khách</h1>
-    <p th:text="${message}"></p>
+<section layout:fragment="content">
+    <div class="mb-4">
+        <h2 class="h4 mb-1">
+            <span th:if="${currentUser != null}"
+                  th:text="|Chào mừng bạn, ${currentUser.fullName}|">Chào mừng bạn,</span>
+            <span th:if="${currentUser == null}">Chào mừng bạn</span>
+        </h2>
+        <p class="text-muted mb-0">Chọn một tính năng bên dưới để bắt đầu.</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Tra cứu chuyến xe</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Tìm chuyến xe theo điểm đi, điểm đến và ngày khởi hành.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/passenger/trips/search}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Tra cứu vé</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Nhập mã vé để xem nhanh chi tiết đặt chỗ của bạn.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/passenger/booking/lookup}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Lịch sử đặt vé</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Xem lại các vé đã đặt, lọc theo trạng thái và huỷ vé khi cần.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/passenger/booking/history}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Hồ sơ cá nhân</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Cập nhật thông tin cá nhân và đổi mật khẩu đăng nhập.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/passenger/profile}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

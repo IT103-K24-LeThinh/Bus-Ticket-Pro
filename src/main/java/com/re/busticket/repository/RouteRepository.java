@@ -1,5 +1,7 @@
 package com.re.busticket.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     boolean existsByDepartureLocationIdAndArrivalLocationIdAndIdNot(Long departureId, Long arrivalId, Long id);
 
     boolean existsByDepartureLocationIdOrArrivalLocationId(Long departureId, Long arrivalId);
+
+    Optional<Route> findByDepartureLocationIdAndArrivalLocationId(Long departureId, Long arrivalId);
 }

@@ -29,8 +29,9 @@ public class Booking {
     private long seatId;
 
     @Column(name = "booking_time")
-    private long bookingTime;
+    private LocalDateTime bookingTime;
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
 
