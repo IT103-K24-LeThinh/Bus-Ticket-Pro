@@ -161,49 +161,58 @@ a:hover {
 
 .page-section,
 .auth-section {
-    max-width: 520px;
+    max-width: 480px;
 }
 
 .auth-section {
-    margin: 24px auto;
-    padding: 0 12px;
+    margin: 60px auto;
+    padding: 0 20px;
+    min-height: 60vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 .auth-card {
+    width: 100%;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
+    border-radius: 10px;
+    padding: 40px 36px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 .auth-card h1 {
-    margin: 0 0 8px;
-    font-size: 24px;
+    margin: 0 0 10px;
+    font-size: 28px;
 }
 
 .auth-description {
-    margin: 0 0 20px;
+    margin: 0 0 28px;
     color: var(--text-muted);
+    font-size: 15px;
 }
 
 .form-grid {
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 
 .form-grid label {
     font-weight: 600;
     color: var(--text);
+    font-size: 15px;
 }
 
 .form-grid input {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background-color: #FFFFFF;
     margin-bottom: 8px;
     color: var(--text);
+    font-size: 15px;
 }
 
 .form-grid input:focus {
@@ -216,13 +225,14 @@ a:hover {
 }
 
 .form-grid button {
-    margin-top: 8px;
+    margin-top: 12px;
     border: 1px solid var(--primary);
     background-color: var(--primary);
     color: #FFFFFF;
     border-radius: 6px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     font-weight: 600;
+    font-size: 16px;
     cursor: pointer;
 }
 
@@ -277,6 +287,79 @@ a:hover {
 .auth-footnote {
     margin: 16px 0 0;
     color: var(--text-muted);
+}
+
+.error-section {
+    max-width: 720px;
+    margin: 24px auto;
+    padding: 0 12px;
+}
+
+.error-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 24px;
+}
+
+.error-code {
+    margin: 0 0 8px;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--danger);
+}
+
+.error-card h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.error-description {
+    margin: 10px 0 0;
+    color: var(--text-muted);
+}
+
+.error-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-link-primary,
+.btn-link-secondary {
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-link-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+.btn-link-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-link-secondary {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--text);
+}
+
+.btn-link-secondary:hover {
+    background-color: var(--secondary-hover);
+    border-color: var(--secondary-hover);
+    color: var(--text);
+    text-decoration: none;
 }
 
 .app-footer {

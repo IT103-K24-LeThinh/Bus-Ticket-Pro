@@ -1,0 +1,22 @@
+<header th:fragment="adminHeader"
+        xmlns:th="http://www.thymeleaf.org"
+        class="admin-header">
+    <div class="admin-header-inner">
+        <div class="d-flex align-items-center gap-2">
+            <a th:if="${currentPath != null and currentPath != '/admin/dashboard'}"
+               class="btn btn-sm btn-outline-secondary"
+               th:href="@{/admin/dashboard}"
+               title="Quay về bảng điều khiển">
+                &#8592; Dashboard
+            </a>
+            <h1 class="page-title mb-0" th:text="${pageTitle} ?: 'Quản trị hệ thống'">Quản trị hệ thống</h1>
+        </div>
+
+        <div class="admin-header-actions">
+            <a class="btn btn-sm btn-secondary" th:href="@{/}">Trang khách hàng</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-sm btn-primary">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</header>

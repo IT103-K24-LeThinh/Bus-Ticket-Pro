@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Bus Ticket Pro">Bus Ticket Pro</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <header class="app-header">
+        <div class="header-inner">
+            <a class="brand" th:href="@{/}">Bus Ticket Pro</a>
+            <nav class="header-nav">
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/login}">Đăng nhập</a>
+                <a th:href="@{/register}">Đăng ký</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-content" layout:fragment="content">
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-inner">&copy; 2026 Bus Ticket Pro. All rights reserved.</div>
+    </footer>
+</div>
+</body>
+</html>

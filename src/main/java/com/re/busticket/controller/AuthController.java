@@ -4,7 +4,6 @@ import com.re.busticket.dto.RegisterUserDto;
 import com.re.busticket.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Slf4j
 @Controller
 @RequestMapping()
 @RequiredArgsConstructor
@@ -24,12 +22,16 @@ public class AuthController {
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout,
+                        @RequestParam(value = "registered", required = false) String registered,
                         Model model) {
         if (error != null) {
             model.addAttribute("errorMessage", "Tên đăng nhập hoặc mật khẩu không chính xác.");
         }
         if (logout != null) {
             model.addAttribute("successMessage", "Bạn đã đăng xuất thành công.");
+        }
+        if (registered != null) {
+            model.addAttribute("successMessage", "Đăng ký thành công, vui lòng đăng nhập.");
         }
         return "auth/login";
     }
@@ -51,12 +53,9 @@ public class AuthController {
             return "auth/register";
         }
 
-        System.out.println(registerUserDto.toString());
-
         try {
             authService.registerUser(registerUserDto);
-            model.addAttribute("message", "Đăng ký thành công!");
-            return "hello";
+            return "redirect:/login?registered=1";
         } catch (RuntimeException ex) {
             bindingResult.reject("register.error", ex.getMessage());
             return "auth/register";

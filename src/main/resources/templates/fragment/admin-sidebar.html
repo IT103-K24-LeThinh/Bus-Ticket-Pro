@@ -1,0 +1,41 @@
+<aside th:fragment="adminSidebar"
+       xmlns:th="http://www.thymeleaf.org"
+       class="admin-sidebar">
+    <a class="admin-brand" th:href="@{/admin/dashboard}">
+        <img th:src="@{/favicon.ico}" alt="Logo">
+        <span>Bus Ticket Admin</span>
+    </a>
+
+    <nav class="admin-nav">
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/dashboard')} ? ' active' : ''"
+           th:href="@{/admin/dashboard}">
+            Bảng điều khiển
+        </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/buses')} ? ' active' : ''"
+           th:href="@{/admin/buses}">
+            Quản lý xe
+        </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/routes')} ? ' active' : ''"
+           th:href="@{/admin/routes}">
+            Tuyến đường
+        </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/locations')} ? ' active' : ''"
+           th:href="@{/admin/locations}">
+            Tỉnh thành
+        </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/drivers')} ? ' active' : ''"
+           th:href="@{/admin/drivers}">
+            Danh mục tài xế
+        </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/trips')} ? ' active' : ''"
+           th:href="@{/admin/trips}">
+            Chuyến xe
+        </a>
+    </nav>
+</aside>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Không có quyền truy cập</title>
+</head>
+<body>
+<section layout:fragment="content" class="error-section">
+    <div class="error-card">
+        <p class="error-code">403</p>
+        <h1>Bạn không có quyền vào trang này</h1>
+        <p class="error-description">Tài khoản hiện tại không đủ quyền để truy cập chức năng này.</p>
+        <div class="error-actions">
+            <a class="btn-link-primary" th:href="@{/}">Về trang chính</a>
+            <a class="btn-link-secondary" th:href="@{/login}">Đăng nhập lại</a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

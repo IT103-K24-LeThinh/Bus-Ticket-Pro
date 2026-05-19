@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Quản lý ghế</title>
+    <th:block layout:fragment="pageStyles">
+        <style>
+            .bus-layout {
+                border-radius: 30px 30px 10px 10px;
+                border: 3px solid #555;
+                padding: 20px 15px;
+                max-width: 420px;
+                margin: 0 auto;
+                background: #f0f0f0;
+            }
+            .bus-front {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 15px;
+                border-bottom: 2px dashed #999;
+                margin-bottom: 15px;
+            }
+            .driver-area {
+                width: 50px; height: 50px; border-radius: 50%;
+                background: #6c757d; color: white;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 11px; font-weight: bold;
+            }
+            .door-indicator {
+                width: 50px; height: 35px; border-radius: 5px;
+                background: #17a2b8; color: white;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 11px; font-weight: bold;
+            }
+            .bus-seats-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 0.4fr 1fr 1fr;
+                gap: 6px;
+                padding: 10px;
+            }
+            .bus-back-row {
+                display: flex;
+                justify-content: center;
+                gap: 6px;
+                margin-top: 12px;
+                padding-top: 12px;
+                border-top: 2px dashed #999;
+            }
+            .seat-cell {
+                width: 52px; height: 52px; border-radius: 8px;
+                cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                font-weight: bold; font-size: 14px;
+                transition: transform 0.15s, box-shadow 0.15s;
+                border: 2px solid rgba(0,0,0,0.15);
+            }
+            .seat-cell:hover {
+                transform: scale(1.1);
+                box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            }
+            .aisle { width: 100%; }
+            .seat-AVAILABLE { background: #28a745; color: white; }
+            .seat-PENDING { background: #ffc107; color: #333; }
+            .seat-BOOKED { background: #dc3545; color: white; }
+            .seat-legend {
+                display: flex; justify-content: center; gap: 20px;
+                margin-top: 20px; flex-wrap: wrap;
+            }
+            .legend-item { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+            .legend-color {
+                width: 20px; height: 20px; border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+            }
+            .legend-available { background: #28a745; }
+            .legend-pending { background: #ffc107; }
+            .legend-booked { background: #dc3545; }
+            .bus-info-card { max-width: 420px; margin: 0 auto 20px auto; }
+        </style>
+    </th:block>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="h5 mb-0" th:text="${pageTitle}">Quản lý ghế</h2>
+        <a class="btn btn-secondary" th:href="@{/admin/trips}">&#8592; Quay lại</a>
+    </div>
+
+    <!-- Bus info -->
+    <div class="card bus-info-card">
+        <div class="card-body text-center">
+            <p class="mb-1"><strong>Chuyến xe #</strong><span th:text="${trip.id}"></span></p>
+            <p class="mb-1"><strong>Biển số:</strong> <span th:text="${bus.licensePlate}"></span></p>
+            <p class="mb-0"><strong>Loại xe:</strong> <span th:text="${bus.busType.displayName}"></span>
+                (<span th:text="${bus.totalSeats}"></span> ghế)</p>
+        </div>
+    </div>
+
+    <!-- Bus layout -->
+    <div class="bus-layout">
+        <div class="bus-front">
+            <div class="driver-area">Tài xế</div>
+            <div class="door-indicator">Cửa</div>
+        </div>
+
+        <!-- Main seats grid -->
+        <div class="bus-seats-grid" th:with="regularCount=${bus.busType.name() == 'SEATS_29' ? 28 : 40}">
+            <th:block th:each="seat, iterStat : ${seats}">
+                <th:block th:if="${iterStat.index &lt; regularCount}">
+                    <div th:classappend="${'seat-' + seat.status.name()}"
+                         class="seat-cell"
+                         th:text="${seat.seatNumber}"
+                         th:attr="data-seat-id=${seat.id},data-seat-number=${seat.seatNumber},data-seat-status=${seat.status.name()}"
+                         onclick="openSeatModal(this)">
+                    </div>
+                    <div class="aisle" th:if="${iterStat.index % 4 == 1}"></div>
+                </th:block>
+            </th:block>
+        </div>
+
+        <!-- Back row: remaining seats -->
+        <div class="bus-back-row" th:with="regularCount=${bus.busType.name() == 'SEATS_29' ? 28 : 40}">
+            <th:block th:each="seat, iterStat : ${seats}">
+                <div th:if="${iterStat.index &gt;= regularCount}"
+                     th:classappend="${'seat-' + seat.status.name()}"
+                     class="seat-cell"
+                     th:text="${seat.seatNumber}"
+                     th:attr="data-seat-id=${seat.id},data-seat-number=${seat.seatNumber},data-seat-status=${seat.status.name()}"
+                     onclick="openSeatModal(this)">
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="seat-legend">
+        <div class="legend-item"><div class="legend-color legend-available"></div><span>Trống</span></div>
+        <div class="legend-item"><div class="legend-color legend-pending"></div><span>Đang giữ</span></div>
+        <div class="legend-item"><div class="legend-color legend-booked"></div><span>Đã đặt</span></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="seatModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cập nhật trạng thái ghế</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Ghế số:</strong> <span id="modalSeatNumber"></span></p>
+                    <p><strong>Trạng thái hiện tại:</strong> <span id="modalCurrentStatus" class="badge"></span></p>
+                    <div class="mt-3">
+                        <label for="newStatus" class="form-label">Trạng thái mới:</label>
+                        <select id="newStatus" class="form-select">
+                            <option value="AVAILABLE">Trống (Available)</option>
+                            <option value="PENDING">Đang giữ (Pending)</option>
+                            <option value="BOOKED">Đã đặt (Booked)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmStatus">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div id="statusToast" class="toast align-items-center border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<th:block layout:fragment="pageScripts">
+    <script th:inline="javascript">
+        const tripId = /*[[${trip.id}]]*/ 0;
+        let currentSeatElement = null;
+
+        function openSeatModal(el) {
+            currentSeatElement = el;
+            const seatNumber = el.getAttribute('data-seat-number');
+            const seatStatus = el.getAttribute('data-seat-status');
+
+            document.getElementById('modalSeatNumber').textContent = seatNumber;
+            const badge = document.getElementById('modalCurrentStatus');
+            badge.textContent = seatStatus;
+            badge.className = 'badge ' + (seatStatus === 'AVAILABLE' ? 'bg-success' : seatStatus === 'PENDING' ? 'bg-warning text-dark' : 'bg-danger');
+            document.getElementById('newStatus').value = seatStatus;
+
+            new bootstrap.Modal(document.getElementById('seatModal')).show();
+        }
+
+        document.getElementById('btnConfirmStatus').addEventListener('click', function() {
+            if (!currentSeatElement) return;
+            const seatId = currentSeatElement.getAttribute('data-seat-id');
+            const newStatus = document.getElementById('newStatus').value;
+
+            fetch('/admin/trips/' + tripId + '/seats/' + seatId + '/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'status=' + newStatus
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                bootstrap.Modal.getInstance(document.getElementById('seatModal')).hide();
+                if (data.success) {
+                    currentSeatElement.classList.remove('seat-AVAILABLE', 'seat-PENDING', 'seat-BOOKED');
+                    currentSeatElement.classList.add('seat-' + newStatus);
+                    currentSeatElement.setAttribute('data-seat-status', newStatus);
+                    showToast(data.message, 'success');
+                } else {
+                    showToast(data.message, 'danger');
+                }
+            })
+            .catch(function(err) {
+                bootstrap.Modal.getInstance(document.getElementById('seatModal')).hide();
+                showToast('Lỗi: ' + err.message, 'danger');
+            });
+        });
+
+        function showToast(msg, type) {
+            var el = document.getElementById('statusToast');
+            document.getElementById('toastMessage').textContent = msg;
+            el.className = 'toast align-items-center border-0 text-bg-' + type;
+            new bootstrap.Toast(el, { delay: 3000 }).show();
+        }
+    </script>
+</th:block>
+</body>
+</html>
