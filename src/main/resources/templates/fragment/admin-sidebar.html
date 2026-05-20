@@ -37,5 +37,10 @@
            th:href="@{/admin/trips}">
             Chuyến xe
         </a>
+        <a class="admin-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/admin/users')} ? ' active' : ''"
+           th:href="@{/admin/users}">
+            Quản lý người dùng
+        </a>
     </nav>
 </aside>

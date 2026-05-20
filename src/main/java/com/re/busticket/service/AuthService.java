@@ -1,10 +1,7 @@
 package com.re.busticket.service;
 
-import com.re.busticket.dto.RegisterUserDto;
-import com.re.busticket.entity.User;
-import com.re.busticket.entity.enums.RoleType;
-import com.re.busticket.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +10,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.re.busticket.dto.RegisterUserDto;
+import com.re.busticket.entity.User;
+import com.re.busticket.entity.enums.RoleType;
+import com.re.busticket.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +54,10 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy user"));
+
+        if (!user.isActive()) {
+            throw new UsernameNotFoundException("Tài khoản đã bị khóa");
+        }
 
         List<GrantedAuthority> authorities = List.of(
                 new SimpleGrantedAuthority(user.getRole().name().toUpperCase())

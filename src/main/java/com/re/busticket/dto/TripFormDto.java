@@ -2,6 +2,8 @@ package com.re.busticket.dto;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.re.busticket.entity.enums.TripStatus;
 
 import jakarta.validation.constraints.Max;
@@ -24,9 +26,11 @@ public class TripFormDto {
     private Long busId;
 
     @NotNull(message = "Thời gian khởi hành không được để trống")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime departureTime;
 
     @NotNull(message = "Thời gian đến không được để trống")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime arrivalTime;
 
     @NotNull(message = "Giá vé không được để trống")

@@ -1,23 +1,29 @@
 package com.re.busticket.service;
 
-import com.re.busticket.dto.TripFormDto;
-import com.re.busticket.entity.Trip;
-import com.re.busticket.entity.enums.SeatStatus;
-import com.re.busticket.repository.SeatRepository;
-import com.re.busticket.repository.TripRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.re.busticket.dto.TripFormDto;
+import com.re.busticket.entity.Bus;
+import com.re.busticket.entity.Trip;
+import com.re.busticket.entity.enums.SeatStatus;
+import com.re.busticket.repository.BusRepository;
+import com.re.busticket.repository.SeatRepository;
+import com.re.busticket.repository.TripRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TripService {
     private final TripRepository tripRepository;
     private final SeatRepository seatRepository;
+    private final BusRepository busRepository;
+    private final SeatService seatService;
 
     public Page<Trip> findAll(Pageable pageable) {
         return tripRepository.findAll(pageable);
@@ -41,11 +47,18 @@ public class TripService {
         return formDto;
     }
 
+    @Transactional
     public Trip create(TripFormDto formDto) {
         validateArrivalAfterDeparture(formDto);
         Trip trip = new Trip();
         mapFormToEntity(formDto, trip);
-        return tripRepository.save(trip);
+        Trip saved = tripRepository.save(trip);
+
+        Bus bus = busRepository.findById(formDto.getBusId())
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy xe với ID: " + formDto.getBusId()));
+        seatService.generateSeatsForTrip(saved.getId(), bus.getBusType());
+
+        return saved;
     }
 
     public Trip update(Long id, TripFormDto formDto) {
