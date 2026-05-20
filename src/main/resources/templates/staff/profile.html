@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/staff}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ cá nhân</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="row g-4">
+        <!-- Profile info -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Thông tin cá nhân</h2>
+
+                    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <form th:action="@{/staff/profile}" method="post" class="row g-3">
+                        <div class="col-12">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input id="username" type="text" class="form-control" th:value="${user.username}" disabled>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="fullName" class="form-label">Họ và tên</label>
+                            <input id="fullName" name="fullName" type="text" class="form-control" th:value="${user.fullName}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" name="email" type="email" class="form-control" th:value="${user.email}">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="phone" class="form-label">Số điện thoại</label>
+                            <input id="phone" name="phone" type="text" class="form-control" th:value="${user.phone}">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="address" class="form-label">Địa chỉ</label>
+                            <input id="address" name="address" type="text" class="form-control" th:value="${user.address}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Vai trò</label>
+                            <input type="text" class="form-control" th:value="${user.role}" disabled>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Cập nhật hồ sơ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change password -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Đổi mật khẩu</h2>
+
+                    <div class="alert alert-danger" th:if="${passwordError}" th:text="${passwordError}"></div>
+
+                    <form th:action="@{/staff/profile/password}" method="post" class="row g-3">
+                        <div class="col-12">
+                            <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
+                            <input id="currentPassword" name="currentPassword" type="password" class="form-control" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                            <input id="newPassword" name="newPassword" type="password" class="form-control" required minlength="6">
+                        </div>
+
+                        <div class="col-12">
+                            <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                            <input id="confirmPassword" name="confirmPassword" type="password" class="form-control" required>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

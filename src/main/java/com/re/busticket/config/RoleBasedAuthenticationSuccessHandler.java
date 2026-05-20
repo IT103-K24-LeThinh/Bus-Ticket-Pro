@@ -1,14 +1,15 @@
 package com.re.busticket.config;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class RoleBasedAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -21,11 +22,15 @@ public class RoleBasedAuthenticationSuccessHandler extends SimpleUrlAuthenticati
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> "ADMIN".equals(grantedAuthority.getAuthority()));
+        boolean isStaff = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> "STAFF".equals(grantedAuthority.getAuthority()));
         boolean isPassenger = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> "PASSENGER".equals(grantedAuthority.getAuthority()));
 
         if (isAdmin) {
             targetUrl = "/admin/dashboard";
+        } else if (isStaff) {
+            targetUrl = "/staff/dashboard";
         } else if (isPassenger) {
             targetUrl = "/passenger/dashboard";
         }

@@ -1,0 +1,25 @@
+<header th:fragment="staffHeader"
+        xmlns:th="http://www.thymeleaf.org"
+        class="staff-header">
+    <div class="staff-header-inner">
+        <div class="d-flex align-items-center gap-2">
+            <a th:if="${currentPath != null and currentPath != '/staff/dashboard'}"
+               class="btn btn-sm btn-outline-secondary"
+               th:href="${backUrl != null ? backUrl : '/staff/dashboard'}"
+               title="Quay lại">
+                &#8592; Quay lại
+            </a>
+            <h1 class="page-title mb-0" th:text="${pageTitle} ?: 'Nhân viên'">Nhân viên</h1>
+        </div>
+
+        <div class="staff-header-actions">
+            <span th:if="${currentUser != null}" class="staff-user-info">
+                <strong th:text="${currentUser.fullName}">Nhân viên</strong>
+                <span class="badge badge-success" th:text="${currentUser.role}">STAFF</span>
+            </span>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-primary">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</header>

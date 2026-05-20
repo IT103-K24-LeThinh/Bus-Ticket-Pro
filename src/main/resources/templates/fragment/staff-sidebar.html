@@ -1,0 +1,31 @@
+<aside th:fragment="staffSidebar"
+       xmlns:th="http://www.thymeleaf.org"
+       class="staff-sidebar">
+    <a class="staff-brand" th:href="@{/staff/dashboard}">
+        <img th:src="@{/favicon.ico}" alt="Logo">
+        <span>Bus Ticket</span>
+    </a>
+
+    <nav class="staff-nav">
+        <a class="staff-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/staff/dashboard')} ? ' active' : ''"
+           th:href="@{/staff/dashboard}">
+            Bảng điều khiển
+        </a>
+        <a class="staff-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/staff/bookings/pending')} ? ' active' : ''"
+           th:href="@{/staff/bookings/pending}">
+            Chờ thanh toán
+        </a>
+        <a class="staff-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/staff/bookings/overdue')} ? ' active' : ''"
+           th:href="@{/staff/bookings/overdue}">
+            Vé quá hạn
+        </a>
+        <a class="staff-nav-link"
+           th:classappend="${currentPath != null and #strings.startsWith(currentPath, '/staff/profile')} ? ' active' : ''"
+           th:href="@{/staff/profile}">
+            Hồ sơ cá nhân
+        </a>
+    </nav>
+</aside>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/staff}">
+<head>
+    <title>Chờ thanh toán</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div th:if="${bookings.totalElements == 0}" class="text-muted">
+        Hiện không có vé nào đang chờ thanh toán.
+    </div>
+
+    <div th:if="${bookings.totalElements > 0}">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã vé</th>
+                    <th>Hành khách</th>
+                    <th>Tuyến</th>
+                    <th>Khởi hành</th>
+                    <th>Ghế</th>
+                    <th>Số tiền</th>
+                    <th>Phương thức</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="booking, iter : ${bookings.content}">
+                    <td th:text="${bookings.number * bookings.size + iter.count}">1</td>
+                    <td th:text="${bookingReferenceMap[booking.id]}">BK-1</td>
+                    <td th:text="${userNameById[booking.userId]}">N/A</td>
+                    <td th:text="${tripRouteName[booking.tripId]}">N/A</td>
+                    <td th:text="${tripDepartureTime[booking.tripId] != null ? #temporals.format(tripDepartureTime[booking.tripId], 'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</td>
+                    <td th:text="${seatNumberById[booking.seatId]}">N/A</td>
+                    <td th:text="${#numbers.formatDecimal(booking.paymentAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</td>
+                    <td th:text="${paymentMethodLabels[booking.paymentMethod.name()]}">N/A</td>
+                    <td>
+                        <form th:action="@{/staff/bookings/{id}/confirm(id=${booking.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Xác nhận</button>
+                        </form>
+                        <form th:action="@{/staff/bookings/{id}/reject(id=${booking.id})}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc muốn từ chối vé này?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Từ chối</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${bookings.totalPages > 1}">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${bookings.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/staff/bookings/pending(page=${bookings.number - 1}, size=${bookings.size})}">«</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, bookings.totalPages - 1)}"
+                    th:classappend="${i == bookings.number} ? 'active'">
+                    <a class="page-link" th:href="@{/staff/bookings/pending(page=${i}, size=${bookings.size})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${bookings.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/staff/bookings/pending(page=${bookings.number + 1}, size=${bookings.size})}">»</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+</body>
+</html>

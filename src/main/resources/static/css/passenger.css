@@ -1,16 +1,16 @@
 :root {
-    --passenger-primary: #1976D2;
-    --passenger-primary-hover: #1565C0;
-    --passenger-secondary: #BBDEFB;
-    --passenger-secondary-hover: #90CAF9;
-    --passenger-bg: #F1F7FD;
+    --passenger-primary: #4CAF50;
+    --passenger-primary-hover: #43A047;
+    --passenger-secondary: #A5D6A7;
+    --passenger-secondary-hover: #81C784;
+    --passenger-bg: #F1F8F3;
     --passenger-surface: #FFFFFF;
     --passenger-text: #212121;
     --passenger-muted: #616161;
     --passenger-success: #66BB6A;
     --passenger-warning: #FFA726;
     --passenger-danger: #EF5350;
-    --passenger-border: #C5DCEF;
+    --passenger-border: #C8E6C9;
 }
 
 * {
@@ -379,7 +379,7 @@ body.passenger-body {
 /* Selected seat highlight (passenger-only state) */
 .seat-cell.selected {
     border: 3px solid var(--passenger-primary);
-    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.25);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
     transform: scale(1.08);
 }
 

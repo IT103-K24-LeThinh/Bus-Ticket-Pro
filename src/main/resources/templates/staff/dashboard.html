@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/staff}">
+<head>
+    <title>Bảng điều khiển</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="mb-4">
+        <h2 class="h4 mb-1">
+            <span th:if="${currentUser != null}"
+                  th:text="|Chào mừng bạn, ${currentUser.fullName}|">Chào mừng bạn,</span>
+            <span th:if="${currentUser == null}">Chào mừng bạn</span>
+        </h2>
+        <p class="text-muted mb-0">Tổng quan công việc hôm nay.</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <p class="card-title">Vé chờ thanh toán</p>
+                    <p class="card-value" th:text="${countPending}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <p class="card-title">Vé quá hạn</p>
+                    <p class="card-value" th:text="${countOverdue}">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Chờ thanh toán</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Xem và xử lý các vé đang chờ xác nhận thanh toán.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/staff/bookings/pending}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h3 class="h5 mb-2">Vé quá hạn</h3>
+                    <p class="text-muted flex-grow-1 mb-3">
+                        Xem và huỷ các vé chưa thanh toán mà chuyến đã khởi hành.
+                    </p>
+                    <a class="btn btn-primary align-self-start"
+                       th:href="@{/staff/bookings/overdue}">
+                        Vào &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

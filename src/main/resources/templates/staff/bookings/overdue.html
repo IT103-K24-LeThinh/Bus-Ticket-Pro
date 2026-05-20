@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/staff}">
+<head>
+    <title>Vé quá hạn</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div th:if="${#lists.isEmpty(overdueBookings)}" class="text-muted">
+        Hiện không có vé quá hạn nào.
+    </div>
+
+    <div th:if="${!#lists.isEmpty(overdueBookings)}">
+        <div class="mb-3">
+            <form th:action="@{/staff/bookings/bulk-cancel-overdue}" method="post" style="display:inline;"
+                  th:attr="onsubmit=|return confirm('Bạn có chắc muốn huỷ tất cả ${#lists.size(overdueBookings)} vé quá hạn?');|">
+                <button type="submit" class="btn btn-danger">Huỷ tất cả</button>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã vé</th>
+                    <th>Hành khách</th>
+                    <th>Tuyến</th>
+                    <th>Khởi hành</th>
+                    <th>Ghế</th>
+                    <th>Số tiền</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="booking, iter : ${overdueBookings}">
+                    <td th:text="${iter.count}">1</td>
+                    <td th:text="${bookingReferenceMap[booking.id]}">BK-1</td>
+                    <td th:text="${userNameById[booking.userId]}">N/A</td>
+                    <td th:text="${tripRouteName[booking.tripId]}">N/A</td>
+                    <td th:text="${tripDepartureTime[booking.tripId] != null ? #temporals.format(tripDepartureTime[booking.tripId], 'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</td>
+                    <td th:text="${seatNumberById[booking.seatId]}">N/A</td>
+                    <td th:text="${#numbers.formatDecimal(booking.paymentAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</td>
+                    <td>
+                        <form th:action="@{/staff/bookings/{id}/cancel-overdue(id=${booking.id})}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc muốn huỷ vé này?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Huỷ vé</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>
