@@ -35,6 +35,7 @@ import com.re.busticket.repository.LocationRepository;
 import com.re.busticket.repository.RouteRepository;
 import com.re.busticket.repository.UserRepository;
 import com.re.busticket.service.BookingService;
+import com.re.busticket.service.EmailService;
 import com.re.busticket.service.SeatService;
 import com.re.busticket.service.TripService;
 import com.re.busticket.service.exception.BookingNotFoundException;
@@ -45,7 +46,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/passenger/booking")
 @RequiredArgsConstructor
 public class PassengerBookingController {
-
+    private final EmailService emailService;
     private final BookingService bookingService;
     private final TripService tripService;
     private final SeatService seatService;
@@ -135,6 +136,8 @@ public class PassengerBookingController {
         try {
             Booking booking = bookingService.createBooking(bookingForm, currentUser.getId());
             if (bookingForm.getPaymentMethod() == PaymentMethod.CASH) {
+                // Send confirmation email
+                sendBookingEmail(booking, currentUser);
                 ra.addFlashAttribute("successMessage", "Đặt vé thành công");
                 return "redirect:/passenger/booking/" + booking.getId();
             }
@@ -308,5 +311,41 @@ public class PassengerBookingController {
                     model.addAttribute("errorMessage", "Không tìm thấy vé với mã đã nhập");
                     return "passenger/booking/lookup";
                 });
+    }
+
+    private void sendBookingEmail(Booking booking, User user) {
+        try {
+            Trip trip = tripService.findById(booking.getTripId());
+            Bus bus = busRepository.findById(trip.getBusId()).orElse(null);
+            Route route = routeRepository.findById(trip.getRouteId()).orElse(null);
+            Seat seat = seatService.findById(booking.getSeatId());
+
+            String routeName = "N/A";
+            if (route != null) {
+                String dep = locationRepository.findById(route.getDepartureLocationId())
+                        .map(loc -> loc.getName()).orElse("N/A");
+                String arr = locationRepository.findById(route.getArrivalLocationId())
+                        .map(loc -> loc.getName()).orElse("N/A");
+                routeName = dep + " → " + arr;
+            }
+
+            String paymentMethodLabel = booking.getPaymentMethod() == PaymentMethod.CASH
+                    ? "Tiền mặt" : "Chuyển khoản";
+
+            emailService.sendBookingConfirmationEmail(
+                    user.getEmail(),
+                    user.getFullName(),
+                    bookingService.toReference(booking),
+                    routeName,
+                    trip.getDepartureTime(),
+                    trip.getArrivalTime(),
+                    seat.getSeatNumber(),
+                    bus != null ? bus.getLicensePlate() : "N/A",
+                    booking.getPaymentAmount(),
+                    paymentMethodLabel
+            );
+        } catch (Exception e) {
+            // Don't fail the booking if email fails
+        }
     }
 }
