@@ -18,45 +18,100 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-7 col-xl-6">
+        <div class="col-lg-8 col-xl-7">
             <div class="card shadow-sm">
                 <div class="card-body p-4">
+                    <!-- Header -->
                     <div class="text-center mb-4">
-                        <h3 class="h4 mb-2">Thanh toán chuyển khoản</h3>
+                        <h3 class="h4 mb-2">Thanh toán chuyển khoản ngân hàng</h3>
                         <p class="text-muted mb-0">
-                            Vui lòng hoàn tất thanh toán để xác nhận vé của bạn.
+                            Quét mã QR hoặc chuyển khoản theo thông tin bên dưới để xác nhận vé.
                         </p>
                     </div>
 
-                    <div class="border rounded p-3 mb-3 bg-light">
-                        <div class="row g-2">
-                            <div class="col-sm-5 text-muted">Mã vé</div>
-                            <div class="col-sm-7 fw-semibold">
-                                <span class="badge bg-primary fs-6"
-                                      th:text="${bookingReference}">BK-0</span>
+                    <!-- Countdown Timer -->
+                    <div id="countdown-container" class="alert alert-warning text-center mb-4" role="alert">
+                        <i class="bi bi-clock me-1"></i>
+                        <span>Thời gian còn lại để thanh toán: </span>
+                        <strong id="countdown-timer">--:--</strong>
+                    </div>
+
+                    <!-- Expiration Message (hidden by default) -->
+                    <div id="expired-container" class="alert alert-danger text-center mb-4 d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <strong>Hết thời gian thanh toán!</strong>
+                        <p class="mb-0 mt-1">Vé của bạn đã hết hạn. Vui lòng đặt vé mới.</p>
+                    </div>
+
+                    <!-- Payment Content (will be disabled when expired) -->
+                    <div id="payment-content">
+                        <!-- QR Code -->
+                        <div class="text-center mb-4">
+                            <div class="border rounded p-3 d-inline-block bg-white">
+                                <img th:src="${qrCodeUrl}"
+                                     alt="QR Code thanh toán"
+                                     class="img-fluid"
+                                     style="max-width: 250px; height: auto;">
                             </div>
                         </div>
-                        <hr class="my-2">
-                        <div class="row g-2">
-                            <div class="col-sm-5 text-muted">Số tiền cần thanh toán</div>
-                            <div class="col-sm-7 fw-bold text-danger fs-5"
-                                 th:text="${#numbers.formatInteger(paymentAmount, 0, 'POINT') + ' VND'}">
-                                0 VND
+
+                        <!-- Payment Details -->
+                        <div class="border rounded p-3 mb-4 bg-light">
+                            <h5 class="h6 mb-3 text-center">Thông tin chuyển khoản</h5>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-5 text-muted">Mã vé</div>
+                                <div class="col-sm-7 fw-semibold">
+                                    <span class="badge bg-primary fs-6"
+                                          th:text="${bookingReference}">BK-0</span>
+                                </div>
                             </div>
+                            <hr class="my-2">
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-5 text-muted">Ngân hàng</div>
+                                <div class="col-sm-7 fw-semibold" th:text="${bankName}">MB</div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-5 text-muted">Số tài khoản</div>
+                                <div class="col-sm-7 fw-semibold">
+                                    <code class="fs-6" th:text="${bankAccountNumber}">0943941773</code>
+                                </div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-5 text-muted">Số tiền</div>
+                                <div class="col-sm-7 fw-bold text-danger fs-5"
+                                     th:text="${formattedAmount}">0 VND</div>
+                            </div>
+                            <hr class="my-2">
+
+                            <div class="row g-2">
+                                <div class="col-sm-5 text-muted">Nội dung chuyển khoản</div>
+                                <div class="col-sm-7 fw-bold">
+                                    <code class="fs-6 text-primary" th:text="${transferContent}">CK 0</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Notes -->
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading mb-2">
+                                <i class="bi bi-info-circle me-1"></i>Lưu ý quan trọng
+                            </h6>
+                            <ul class="mb-0 ps-3">
+                                <li>Vui lòng nhập <strong>chính xác</strong> nội dung chuyển khoản để hệ thống tự động xác nhận.</li>
+                                <li>Thanh toán sẽ được xác nhận tự động trong vài phút sau khi chuyển khoản thành công.</li>
+                                <li>Nếu quá thời gian mà chưa thanh toán, vé sẽ bị hủy tự động.</li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div class="alert alert-warning" role="alert">
-                        Tích hợp thanh toán đang được hoàn thiện. Vé sẽ giữ trạng thái
-                        CHỜ XỬ LÝ cho đến khi thanh toán được xử lý.
-                    </div>
-
-                    <div class="border border-dashed rounded p-4 text-center text-muted mb-4"
-                         style="border-style: dashed !important;">
-                        (Giao diện thanh toán sẽ được cập nhật trong tương lai)
-                    </div>
-
-                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mt-4">
                         <a th:href="@{/passenger/booking/history}"
                            class="btn btn-outline-secondary">
                             Quay lại
@@ -70,6 +125,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Countdown Timer Script -->
+    <script th:inline="javascript">
+        (function() {
+            var remainingSeconds = /*[[${remainingSeconds}]]*/ 0;
+            var countdownTimer = document.getElementById('countdown-timer');
+            var countdownContainer = document.getElementById('countdown-container');
+            var expiredContainer = document.getElementById('expired-container');
+            var paymentContent = document.getElementById('payment-content');
+
+            function formatTime(totalSeconds) {
+                var minutes = Math.floor(totalSeconds / 60);
+                var seconds = totalSeconds % 60;
+                return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+            }
+
+            function showExpired() {
+                countdownContainer.classList.add('d-none');
+                expiredContainer.classList.remove('d-none');
+                paymentContent.style.opacity = '0.5';
+                paymentContent.style.pointerEvents = 'none';
+            }
+
+            function updateCountdown() {
+                if (remainingSeconds <= 0) {
+                    showExpired();
+                    return;
+                }
+                countdownTimer.textContent = formatTime(remainingSeconds);
+                remainingSeconds--;
+                setTimeout(updateCountdown, 1000);
+            }
+
+            updateCountdown();
+        })();
+    </script>
 </section>
 </body>
 </html>

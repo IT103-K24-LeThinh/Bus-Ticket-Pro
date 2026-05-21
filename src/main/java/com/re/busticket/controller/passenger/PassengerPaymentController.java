@@ -1,5 +1,6 @@
 package com.re.busticket.controller.passenger;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import com.re.busticket.entity.Booking;
 import com.re.busticket.entity.User;
 import com.re.busticket.repository.UserRepository;
 import com.re.busticket.service.BookingService;
+import com.re.busticket.service.QrCodeService;
 import com.re.busticket.service.exception.BookingNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,13 @@ public class PassengerPaymentController {
 
     private final BookingService bookingService;
     private final UserRepository userRepository;
+    private final QrCodeService qrCodeService;
+
+    @Value("${sepay.account.number}")
+    private String bankAccountNumber;
+
+    @Value("${sepay.bank.code}")
+    private String bankName;
 
     @GetMapping("/bank-transfer/{bookingId}")
     public String bankTransfer(@PathVariable Long bookingId,
@@ -42,10 +51,22 @@ public class PassengerPaymentController {
         }
 
         String bookingReference = bookingService.toReference(booking);
+        double paymentAmount = booking.getPaymentAmount();
+
+        String qrCodeUrl = qrCodeService.generateQrUrl(bookingId, paymentAmount);
+        String transferContent = qrCodeService.formatTransferContent(bookingId);
+        String formattedAmount = qrCodeService.formatAmountDisplay(paymentAmount);
+        long remainingSeconds = qrCodeService.calculateRemainingSeconds(booking.getBookingTime());
 
         model.addAttribute("booking", booking);
         model.addAttribute("bookingReference", bookingReference);
-        model.addAttribute("paymentAmount", booking.getPaymentAmount());
+        model.addAttribute("paymentAmount", paymentAmount);
+        model.addAttribute("qrCodeUrl", qrCodeUrl);
+        model.addAttribute("transferContent", transferContent);
+        model.addAttribute("formattedAmount", formattedAmount);
+        model.addAttribute("remainingSeconds", remainingSeconds);
+        model.addAttribute("bankAccountNumber", bankAccountNumber);
+        model.addAttribute("bankName", bankName);
         model.addAttribute("pageTitle", "Thanh toán chuyển khoản");
         model.addAttribute("currentPath", "/passenger/payment/bank-transfer");
         model.addAttribute("backUrl", "/passenger/booking/history");

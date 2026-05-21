@@ -29,13 +29,14 @@ import com.re.busticket.entity.Trip;
 import com.re.busticket.entity.User;
 import com.re.busticket.entity.enums.BookingStatus;
 import com.re.busticket.entity.enums.PaymentMethod;
-import com.re.busticket.entity.enums.SeatStatus;
 import com.re.busticket.repository.BusRepository;
 import com.re.busticket.repository.LocationRepository;
 import com.re.busticket.repository.RouteRepository;
 import com.re.busticket.repository.UserRepository;
 import com.re.busticket.service.BookingService;
 import com.re.busticket.service.EmailService;
+import com.re.busticket.entity.enums.SeatLockResult;
+import com.re.busticket.service.SeatLockService;
 import com.re.busticket.service.SeatService;
 import com.re.busticket.service.TripService;
 import com.re.busticket.service.exception.BookingNotFoundException;
@@ -50,6 +51,7 @@ public class PassengerBookingController {
     private final BookingService bookingService;
     private final TripService tripService;
     private final SeatService seatService;
+    private final SeatLockService seatLockService;
     private final BusRepository busRepository;
     private final RouteRepository routeRepository;
     private final LocationRepository locationRepository;
@@ -61,28 +63,30 @@ public class PassengerBookingController {
                           Authentication authentication,
                           Model model,
                           RedirectAttributes ra) {
-        Seat seat;
-        try {
-            seat = seatService.findById(seatId);
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("errorMessage", "Ghế không còn khả dụng");
-            return "redirect:/passenger/trips/" + tripId + "/seats";
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Không tìm thấy người dùng hiện tại"));
+
+        SeatLockResult lockResult = seatLockService.tryLockSeat(seatId, tripId, currentUser.getId());
+//        System.out.println(lockResult);
+
+        switch (lockResult) {
+            case LOCKED:
+            case ALREADY_LOCKED_BY_SELF:
+                break;
+            case LOCKED_BY_OTHER:
+                ra.addFlashAttribute("errorMessage", "Ghế đang được người khác giữ");
+                return "redirect:/passenger/trips/" + tripId + "/seats";
+            case SEAT_BOOKED:
+                ra.addFlashAttribute("errorMessage", "Ghế không còn khả dụng");
+                return "redirect:/passenger/trips/" + tripId + "/seats";
+            case INVALID:
+                ra.addFlashAttribute("errorMessage", "Lựa chọn không hợp lệ");
+                return "redirect:/passenger/trips/" + tripId + "/seats";
         }
 
-        if (seat.getTripId() == null
-                || !seat.getTripId().equals(tripId)
-                || seat.getStatus() != SeatStatus.AVAILABLE) {
-            ra.addFlashAttribute("errorMessage", "Ghế không còn khả dụng");
-            return "redirect:/passenger/trips/" + tripId + "/seats";
-        }
-
-        Trip trip;
-        try {
-            trip = tripService.findById(tripId);
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("errorMessage", "Ghế không còn khả dụng");
-            return "redirect:/passenger/trips/" + tripId + "/seats";
-        }
+        Seat seat = seatService.findById(seatId);
+        Trip trip = tripService.findById(tripId);
 
         Bus bus = busRepository.findById(trip.getBusId())
                 .orElseThrow(() -> new IllegalStateException(
@@ -98,10 +102,6 @@ public class PassengerBookingController {
         String arrivalLocationName = locationRepository.findById(route.getArrivalLocationId())
                 .map(loc -> loc.getName())
                 .orElse("N/A");
-
-        User currentUser = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Không tìm thấy người dùng hiện tại"));
 
         BookingFormDto bookingForm = new BookingFormDto();
         bookingForm.setTripId(tripId);
@@ -129,6 +129,7 @@ public class PassengerBookingController {
     public String create(@ModelAttribute BookingFormDto bookingForm,
                          Authentication authentication,
                          RedirectAttributes ra) {
+        System.out.println(bookingForm.toString());
         User currentUser = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException(
                         "Không tìm thấy người dùng hiện tại"));
@@ -136,7 +137,6 @@ public class PassengerBookingController {
         try {
             Booking booking = bookingService.createBooking(bookingForm, currentUser.getId());
             if (bookingForm.getPaymentMethod() == PaymentMethod.CASH) {
-                // Send confirmation email
                 sendBookingEmail(booking, currentUser);
                 ra.addFlashAttribute("successMessage", "Đặt vé thành công");
                 return "redirect:/passenger/booking/" + booking.getId();
@@ -345,7 +345,6 @@ public class PassengerBookingController {
                     paymentMethodLabel
             );
         } catch (Exception e) {
-            // Don't fail the booking if email fails
         }
     }
 }

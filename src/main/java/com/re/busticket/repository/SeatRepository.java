@@ -18,4 +18,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     long countByTripIdAndStatusIn(Long tripId, List<SeatStatus> statuses);
 
     void deleteByTripId(Long tripId);
+
+    List<Seat> findByTripIdAndLockedByUserId(Long tripId, Long lockedByUserId);
 }

@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/register", "/forbidden", "/error", "/error/**", "/css/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/payment/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/passenger/**").hasAuthority("PASSENGER")
                         .requestMatchers("/staff/**").hasAuthority("STAFF")

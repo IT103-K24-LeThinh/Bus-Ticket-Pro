@@ -30,15 +30,22 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final SeatRepository seatRepository;
     private final TripRepository tripRepository;
+    private final SeatLockService seatLockService;
 
     @Transactional
     public Booking createBooking(BookingFormDto form, Long currentUserId) {
         Seat seat = seatRepository.findById(form.getSeatId())
                 .orElseThrow(() -> new IllegalStateException("Ghế không còn khả dụng, vui lòng chọn ghế khác"));
 
-        if (seat.getTripId() == null
-                || !seat.getTripId().equals(form.getTripId())
-                || seat.getStatus() != SeatStatus.AVAILABLE) {
+        if (seat.getTripId() == null || !seat.getTripId().equals(form.getTripId())) {
+            throw new IllegalStateException("Ghế không còn khả dụng, vui lòng chọn ghế khác");
+        }
+
+        boolean isAvailable = seat.getStatus() == SeatStatus.AVAILABLE;
+        boolean isLockedBySelf = seat.getStatus() == SeatStatus.PENDING
+                && currentUserId.equals(seat.getLockedByUserId());
+
+        if (!isAvailable && !isLockedBySelf) {
             throw new IllegalStateException("Ghế không còn khả dụng, vui lòng chọn ghế khác");
         }
 
@@ -62,6 +69,9 @@ public class BookingService {
 
         Booking saved = bookingRepository.save(booking);
         seatRepository.save(seat);
+
+        seatLockService.clearLock(form.getSeatId());
+
         return saved;
     }
 

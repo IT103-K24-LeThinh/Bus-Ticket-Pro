@@ -1,5 +1,6 @@
 package com.re.busticket.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByBookingStatus(BookingStatus status);
 
     List<Booking> findByBookingStatus(BookingStatus status);
+
+    List<Booking> findByBookingStatusAndBookingTimeBefore(BookingStatus status, LocalDateTime cutoff);
+
+    List<Booking> findByTripIdAndBookingStatus(Long tripId, BookingStatus bookingStatus);
 }
