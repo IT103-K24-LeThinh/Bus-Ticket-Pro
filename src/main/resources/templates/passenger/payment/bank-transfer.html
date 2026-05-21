@@ -126,14 +126,16 @@
         </div>
     </div>
 
-    <!-- Countdown Timer Script -->
+    <!-- Countdown Timer & Payment Status Polling Script -->
     <script th:inline="javascript">
         (function() {
             var remainingSeconds = /*[[${remainingSeconds}]]*/ 0;
+            var bookingId = /*[[${booking.id}]]*/ 0;
             var countdownTimer = document.getElementById('countdown-timer');
             var countdownContainer = document.getElementById('countdown-container');
             var expiredContainer = document.getElementById('expired-container');
             var paymentContent = document.getElementById('payment-content');
+            var pollInterval = null;
 
             function formatTime(totalSeconds) {
                 var minutes = Math.floor(totalSeconds / 60);
@@ -146,6 +148,44 @@
                 expiredContainer.classList.remove('d-none');
                 paymentContent.style.opacity = '0.5';
                 paymentContent.style.pointerEvents = 'none';
+                stopPolling();
+            }
+
+            function showPaymentSuccess() {
+                stopPolling();
+                countdownContainer.classList.add('d-none');
+                paymentContent.innerHTML = '<div class="alert alert-success text-center" role="alert">' +
+                    '<i class="bi bi-check-circle fs-1 d-block mb-2"></i>' +
+                    '<h5>Thanh toán thành công!</h5>' +
+                    '<p class="mb-0">Vé của bạn đã được xác nhận. Đang chuyển hướng...</p>' +
+                    '</div>';
+                setTimeout(function() {
+                    window.location.href = '/passenger/booking/' + bookingId;
+                }, 2000);
+            }
+
+            function checkPaymentStatus() {
+                fetch('/passenger/payment/status/' + bookingId)
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.status === 'CONFIRMED') {
+                            showPaymentSuccess();
+                        } else if (data.status === 'CANCELLED') {
+                            showExpired();
+                        }
+                    })
+                    .catch(function() { /* ignore fetch errors, retry next interval */ });
+            }
+
+            function startPolling() {
+                pollInterval = setInterval(checkPaymentStatus, 3000);
+            }
+
+            function stopPolling() {
+                if (pollInterval) {
+                    clearInterval(pollInterval);
+                    pollInterval = null;
+                }
             }
 
             function updateCountdown() {
@@ -159,6 +199,9 @@
             }
 
             updateCountdown();
+            if (remainingSeconds > 0) {
+                startPolling();
+            }
         })();
     </script>
 </section>

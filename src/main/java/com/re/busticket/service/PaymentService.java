@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class PaymentService {
 
     private static final String APIKEY_PREFIX = "Apikey ";
-    private static final Pattern CONTENT_PATTERN = Pattern.compile("^CK (\\d+)$");
+    private static final Pattern CONTENT_PATTERN = Pattern.compile("CK (\\d+)");
 
     private final BookingRepository bookingRepository;
     private final SeatRepository seatRepository;
@@ -40,7 +40,7 @@ public class PaymentService {
             return null;
         }
         Matcher matcher = CONTENT_PATTERN.matcher(content);
-        if (!matcher.matches()) {
+        if (!matcher.find()) {
             return null;
         }
         try {

@@ -31,7 +31,7 @@ public class PaymentController {
                     .body(Map.of("success", false));
         }
 
-//        System.out.println(request.toString());
+        System.err.println(request.toString());
 
         if (request == null || request.getId() == null) {
             return ResponseEntity
@@ -40,7 +40,7 @@ public class PaymentController {
         }
 
         Long bookingId = paymentService.parseBookingIdFromContent(request.getContent());
-//        System.out.println("bookingId: " + bookingId);
+        System.err.println("bookingId: " + bookingId);
         if (bookingId == null) {
             return ResponseEntity.ok(Map.of("success", true));
         }
