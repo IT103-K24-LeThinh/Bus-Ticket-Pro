@@ -290,6 +290,7 @@ public class PassengerBookingController {
 
     @PostMapping("/lookup")
     public String lookupSubmit(@RequestParam(required = false) String bookingReference,
+                                @RequestParam(required = false) String phoneNumber,
                                 Authentication authentication,
                                 Model model) {
         User currentUser = userRepository.findByUsername(authentication.getName())
@@ -299,13 +300,17 @@ public class PassengerBookingController {
         model.addAttribute("currentPath", "/passenger/booking/lookup");
         model.addAttribute("backUrl", "/passenger/dashboard");
         model.addAttribute("bookingReference", bookingReference);
+        model.addAttribute("phoneNumber", phoneNumber);
 
         if (bookingReference == null || bookingReference.trim().isEmpty()) {
             model.addAttribute("errorMessage", "Vui lòng nhập mã vé");
             return "passenger/booking/lookup";
+        }else if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            model.addAttribute("errorMessage", "Vui lòng nhập SĐT");
+            return  "passenger/booking/lookup";
         }
 
-        return bookingService.lookupByReference(bookingReference, currentUser.getId())
+        return bookingService.lookupByReference(bookingReference, phoneNumber)
                 .map(booking -> "redirect:/passenger/booking/" + booking.getId())
                 .orElseGet(() -> {
                     model.addAttribute("errorMessage", "Không tìm thấy vé với mã đã nhập");

@@ -125,12 +125,12 @@ public class BookingService {
                 .orElseThrow(() -> new BookingNotFoundException("Không tìm thấy vé"));
     }
 
-    public Optional<Booking> lookupByReference(String reference, Long currentUserId) {
+    public Optional<Booking> lookupByReference(String reference, String phoneNumber) {
         Long bookingId = parseReference(reference);
         if (bookingId == null) {
             return Optional.empty();
         }
-        return bookingRepository.findByIdAndUserId(bookingId, currentUserId);
+        return bookingRepository.findByIdAndUserPhoneNumber(bookingId, phoneNumber);
     }
 
     public String toReference(Booking booking) {

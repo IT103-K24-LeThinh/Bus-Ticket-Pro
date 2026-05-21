@@ -23,6 +23,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Optional<Booking> findByIdAndUserId(Long id, Long userId);
 
+    @Query("""
+        SELECT b FROM Booking b
+        JOIN User u ON u.id = b.userId
+        WHERE b.id = :bookingId
+        AND u.phone = :phoneNumber
+    """)
+    Optional<Booking> findByIdAndUserPhoneNumber(Long bookingId, String phoneNumber);
+
     Page<Booking> findByBookingStatusOrderByBookingTimeAsc(BookingStatus status, Pageable pageable);
 
     long countByBookingStatus(BookingStatus status);
